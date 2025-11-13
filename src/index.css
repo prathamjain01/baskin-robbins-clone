@@ -1,0 +1,201 @@
+@import "tailwindcss";
+
+/* ===== Baskin Robins theme tokens ===== */
+:root {
+  --brand-pink: #ff5ea5;
+  --brand-blue: #004c97;
+  --brand-cream: #f4f0ed;
+  --brand-deep: #2b1b17;
+}
+
+body {
+  @apply bg-[color:var(--brand-cream)] text-[color:var(--brand-deep)] font-sans;
+}
+
+/* Smooth hardware-accelerated drawer transitions */
+.translate-x-0 { transform: translateX(0) !important; }
+.translate-x-full { transform: translateX(100%) !important; }
+
+/* Ensure overlay fade looks smooth */
+.transition-opacity { transition: opacity 200ms ease; }
+
+/* Ensure drawer doesn't get pushed by transforms in some browsers */
+html, body, #root {
+  height: 100%;
+}
+
+/* Make sure sticky header/footer inside drawer behave correctly */
+asidedrawer-stub {}
+
+/* Optional: small style polish */
+.cart-item-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* CART ITEM ANIMATIONS */
+.cart-item {
+  transform-origin: left center;
+  will-change: transform, opacity;
+}
+
+/* just-added: subtle scale up + background flash */
+.cart-item-just-added {
+  animation: cart-just-added 850ms cubic-bezier(.2,.9,.2,1);
+  background: rgba(255, 94, 165, 0.04); /* faint pink highlight */
+  border-radius: 8px;
+}
+
+/* removal: slide down + fade out */
+.cart-item-removing {
+  animation: cart-remove 350ms ease forwards;
+}
+
+/* thumbnail hover zoom */
+.cart-item img {
+  transition: transform 300ms ease, opacity 300ms ease;
+}
+.cart-item img:hover {
+  transform: scale(1.08);
+}
+
+/* keyframes */
+@keyframes cart-just-added {
+  0% {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.985);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(0) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes cart-remove {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    height: auto;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+    height: 0;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* small polish for order summary */
+@media (min-width: 768px) {
+  .md\\:w-\\[480px\\] { width: 480px; } /* ensure drawer width consistent if needed */
+}
+
+/* Header badge bump animation */
+.badge-bump {
+  animation: badge-bump 380ms cubic-bezier(.2,.9,.3,1);
+}
+
+/* small pop + bounce */
+@keyframes badge-bump {
+  0% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+  30% {
+    transform: scale(1.28) translateY(-6px);
+    opacity: 1;
+  }
+  60% {
+    transform: scale(0.98) translateY(0);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Ensure the numeric badge stays visually consistent on very small screens */
+@media (max-width: 420px) {
+  .badge-bump {
+    font-size: 11px;
+    padding-left: 0.36rem;
+    padding-right: 0.36rem;
+  }
+}
+
+/* ===== HERO BAG EFFECTS (tuned to avoid header overlap) ===== */
+
+/* Glow circle behind the bag (softer, slightly reduced blur) */
+.bag-glow {
+  width: 70%;
+  height: 60%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 40%,
+              rgba(255,94,165,0.26) 0%,
+              rgba(255,94,165,0.14) 18%,
+              rgba(255,201,189,0.05) 40%,
+              transparent 65%);
+  filter: blur(32px);
+  opacity: 0.9;
+  transform: translateY(6px);
+  pointer-events: none;
+}
+
+/* bag image base */
+.bag-img {
+  will-change: transform;
+  transform-origin: center bottom;
+  z-index: 40;   /* keep below header (header should be z-60) */
+}
+
+/* gentler float (reduced vertical movement) */
+@keyframes bag-float {
+  0% { transform: translateY(0) rotate(-8deg) scale(1); }
+  50% { transform: translateY(-6px) rotate(-6.2deg) scale(1.01); }
+  100% { transform: translateY(0) rotate(-8deg) scale(1); }
+}
+.bag-float {
+  animation: bag-float 7s ease-in-out infinite;
+}
+
+/* reduced wobble, no z-index bump */
+@keyframes bag-wobble {
+  0% { transform: rotate(-8deg) scale(1); }
+  25% { transform: rotate(-4deg) scale(1.03); }
+  60% { transform: rotate(-10deg) scale(1.01); }
+  100% { transform: rotate(-8deg) scale(1); }
+}
+.bag-hover-wobble {
+  transition: transform 220ms ease;
+}
+.bag-hover-wobble:hover {
+  animation: bag-wobble 520ms cubic-bezier(.2,.9,.25,1);
+}
+
+/* subtle focus/keyboard accessibility */
+.bag-hover-wobble:focus {
+  outline: 2px solid rgba(255,94,165,0.14);
+  outline-offset: 6px;
+}
+
+/* small responsive tweak: reduce float on very small screens for stability */
+@media (max-width: 420px) {
+  .bag-float { animation-duration: 6s; }
+  .bag-glow { filter: blur(24px); opacity: 0.82; }
+}
+
+/* Slight stronger shadow on hover; no elevation overlap */
+.bag-hover-wobble:hover {
+  filter: drop-shadow(0 26px 34px rgba(15,15,15,0.08));
+}
+
+/* Ensure the glow doesn't create layout overflow */
+.hero-vignette, .hero-vignette * {
+  box-sizing: border-box;
+}
